@@ -222,7 +222,7 @@ class ProgressBar(object):
         widgets = ''.join(self._format_widgets())
 
         if self.left_justify: return widgets.ljust(self.term_width)
-        else: return widgets.rjust(self.term_width)
+        return widgets.rjust(self.term_width)
 
 
     def _need_update(self):
