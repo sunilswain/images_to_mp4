@@ -37,7 +37,7 @@ class UnknownLength:
 
 def format_updatable(updatable, pbar):
     if hasattr(updatable, 'update'): return updatable.update(pbar)
-    else: return updatable
+    return updatable
 
 
 class Widget(AbstractWidget):
@@ -111,12 +111,11 @@ class ETA(Timer):
 
         if pbar.maxval is UnknownLength or pbar.currval == 0:
             return 'ETA:  --:--:--'
-        elif pbar.finished:
+        if pbar.finished:
             return 'Time: %s' % self.format_time(pbar.seconds_elapsed)
-        else:
-            elapsed = pbar.seconds_elapsed
-            eta = elapsed * pbar.maxval / pbar.currval - elapsed
-            return 'ETA:  %s' % self.format_time(eta)
+        elapsed = pbar.seconds_elapsed
+        eta = elapsed * pbar.maxval / pbar.currval - elapsed
+        return 'ETA:  %s' % self.format_time(eta)
 
 
 class AdaptiveETA(Timer):
@@ -149,19 +148,18 @@ class AdaptiveETA(Timer):
         """Updates the widget to show the ETA or total time when finished."""
         if pbar.maxval is UnknownLength or pbar.currval == 0:
             return 'ETA:  --:--:--'
-        elif pbar.finished:
+        if pbar.finished:
             return 'Time: %s' % self.format_time(pbar.seconds_elapsed)
-        else:
-            elapsed = pbar.seconds_elapsed
-            currval1, elapsed1 = self._update_samples(pbar.currval, elapsed)
-            eta = self._eta(pbar.maxval, pbar.currval, elapsed)
-            if pbar.currval > currval1:
-                etasamp = self._eta(pbar.maxval - currval1,
-                                    pbar.currval - currval1,
-                                    elapsed - elapsed1)
-                weight = (pbar.currval / float(pbar.maxval)) ** 0.5
-                eta = (1 - weight) * eta + weight * etasamp
-            return 'ETA:  %s' % self.format_time(eta)
+        elapsed = pbar.seconds_elapsed
+        currval1, elapsed1 = self._update_samples(pbar.currval, elapsed)
+        eta = self._eta(pbar.maxval, pbar.currval, elapsed)
+        if pbar.currval > currval1:
+            etasamp = self._eta(pbar.maxval - currval1,
+                                pbar.currval - currval1,
+                                elapsed - elapsed1)
+            weight = (pbar.currval / float(pbar.maxval)) ** 0.5
+            eta = (1 - weight) * eta + weight * etasamp
+        return 'ETA:  %s' % self.format_time(eta)
 
 
 class FileTransferSpeed(Widget):
@@ -313,8 +311,7 @@ class Bar(WidgetHFill):
 
         if self.fill_left:
             return '%s%s%s' % (left, marked.ljust(width, self.fill), right)
-        else:
-            return '%s%s%s' % (left, marked.rjust(width, self.fill), right)
+        return '%s%s%s' % (left, marked.rjust(width, self.fill), right)
 
 
 class ReverseBar(Bar):
